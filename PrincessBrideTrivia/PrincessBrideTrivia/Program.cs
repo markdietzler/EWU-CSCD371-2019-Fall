@@ -17,6 +17,9 @@ namespace PrincessBrideTrivia
                 if (result)
                 {
                     numberCorrect++;
+                } else
+                {
+                    Console.WriteLine("false\n");
                 }
             }
             Console.WriteLine("You got " + GetPercentCorrect(numberCorrect, questions.Length) + " correct");
@@ -24,7 +27,16 @@ namespace PrincessBrideTrivia
 
         public static string GetPercentCorrect(int numberCorrectAnswers, int numberOfQuestions)
         {
-            return (numberCorrectAnswers / numberOfQuestions * 100) + "%";
+            //int division drives me nuts, I cast the ints to doubles and truncate the decimal places for the percentage
+            double result = 0.0;
+            double correctAnswers = numberCorrectAnswers + 0.0;
+            double questionCnt = numberOfQuestions + 0.0;
+            if(numberCorrectAnswers >= 1.0)
+            {
+                result = (correctAnswers / questionCnt) * 100;
+                String.Format("{0:##}", result);
+            }
+            return result + "%";
         }
 
         public static bool AskQuestion(Question question)
@@ -71,6 +83,7 @@ namespace PrincessBrideTrivia
             string[] lines = File.ReadAllLines(filePath);
 
             Question[] questions = new Question[lines.Length / 5];
+
             for (int i = 0; i < questions.Length; i++)
             {
                 int lineIndex = i * 5;
@@ -89,6 +102,7 @@ namespace PrincessBrideTrivia
                 question.Answers[1] = answer2;
                 question.Answers[2] = answer3;
                 question.CorrectAnswerIndex = correctAnswerIndex;
+                questions[i] = question;
             }
             return questions;
         }
