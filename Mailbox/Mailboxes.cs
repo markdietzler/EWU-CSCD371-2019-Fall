@@ -1,63 +1,57 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Mailbox
+﻿namespace Mailbox
 {
-    public class Mailboxes : List<Mailbox>
+    public class Mailboxes
     {
-        public Mailboxes(IEnumerable<Mailbox> collection, int width, int height) 
-            : base(collection)
-        { 
-            if (width < 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(width));
-            }
-            if (height < 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(height));
-            }
-            Width = width;
-            Height = height;
-        }
+        public Mailbox[,] mMailBoxesArray { get; }
 
-        public int Width { get; }
-        public int Height { get; }
-
-        public bool GetAdjacentPeople(int x, int y, out HashSet<Person> adjacentPeople)
+        public Mailboxes(Mailbox[,] newMailBoxesArray)
         {
-            adjacentPeople = new HashSet<Person>();
-            bool isOccupied = false;
+            this.mMailBoxesArray = newMailBoxesArray;
+        }
 
-            foreach(Mailbox mailbox in this)
+        public (int, int) FindValidLocation(Person owner)
+        {
+            for (int i = 0; i < mMailBoxesArray.GetLength(0); i++)
             {
-                //current
-                if (mailbox.Location == (x, y))
+                for (int j = 0; j < mMailBoxesArray.GetLength(1); j++)
                 {
-                    isOccupied = true;
-                }
-                //above
-                if (mailbox.Location == (x, y - 1))
-                {
-                    adjacentPeople.Add(mailbox.Owner);
-                }
-                //right
-                if (mailbox.Location == (x + 1, y))
-                {
-                    adjacentPeople.Add(mailbox.Owner);
-                }
-                //bottom
-                if (mailbox.Location == (x, y + 1))
-                {
-                    adjacentPeople.Add(mailbox.Owner);
-                }
-                //left
-                if (mailbox.Location == (x - 1, y))
-                {
-                    adjacentPeople.Add(mailbox.Owner);
+                    if (CanOwnBox(owner, i, j))
+                    {
+                        return (i, j);
+                    }
                 }
             }
-
-            return isOccupied;
+            return (-1, -1); // No available box
         }
+
+        private bool CanOwnBox(Person mailboxOwner, int x, int y)
+        {
+            if (mMailBoxesArray[x, y] != null)
+            {
+                return false;
+            }
+            //Checking right
+            if (x + 1 < mMailBoxesArray.GetLength(0) && mMailBoxesArray[x + 1, y] != null && mMailBoxesArray[x + 1, y].mOwner.Equals(mailboxOwner))
+            {
+                return false;
+            }
+            //Checking left
+            if (x - 1 >= 0 && mMailBoxesArray[x - 1, y] != null && mMailBoxesArray[x - 1, y].mOwner.Equals(mailboxOwner))
+            {
+                return false;
+            }
+            //Checking up
+            if (y - 1 >= 0 && mMailBoxesArray[x, y - 1] != null && mMailBoxesArray[x, y - 1].mOwner.Equals(mailboxOwner))
+            {
+                return false;
+            }
+            //Checking down
+            if (y + 1 < mMailBoxesArray.GetLength(1) && mMailBoxesArray[x, y + 1] != null && mMailBoxesArray[x, y + 1].mOwner.Equals(mailboxOwner))
+            {
+                return false;
+            }
+            return true;
+        }
+
     }
 }
