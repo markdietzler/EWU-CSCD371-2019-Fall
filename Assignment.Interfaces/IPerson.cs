@@ -9,7 +9,6 @@ namespace Assignment
         string FirstName { get; }
         string LastName { get; }
         IAddress Address { get; }
-
         string EmailAddress { get; }
     }
 }
