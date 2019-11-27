@@ -22,12 +22,13 @@ namespace WpfApp1
     {
         public MainWindow()
         {
+            DataContext = new MainWindowViewModel();
             InitializeComponent();
         }
 
         private void RenamePerson(object sender, RoutedEventArgs e)
         {
-            MyTextBlock.Text = "Kevin";
+            //MyTextBlock.Text = "Kevin";
         }
     }
 }
