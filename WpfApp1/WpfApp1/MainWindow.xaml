@@ -5,11 +5,15 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WpfApp1"
         mc:Ignorable="d" Topmost="True" 
-        TextElement.FontSize="40"
+        TextElement.FontSize="30"
         x:Name="MyWindow"
         d:DataContext="{d:DesignInstance Type=local:MainWindowViewModel}"
         Title="MainWindow" Height="450" Width="800">
-    <Grid Background="Lime" >
+    <Window.Resources>
+        <local:PersonAgeConverter x:Key="PersonAgeConverter" />
+    </Window.Resources>
+    
+    <Grid Background="Lime">
         <Grid.ColumnDefinitions>
             <ColumnDefinition />
             <ColumnDefinition />
@@ -29,11 +33,12 @@
             <TextBox Text="{Binding SelectedPerson.LastName}"/>
         </StackPanel>
 
-        <TextBlock Grid.Column="0" Grid.Row="2">
+        <TextBlock Grid.Column="0" Grid.Row="2" TextWrapping="Wrap">
             <TextBlock.Text>
-                <MultiBinding StringFormat="Hi {0} {1}">
+                <MultiBinding StringFormat="Hi {0} {1} you are {2} years old">
                     <Binding Path="SelectedPerson.FirstName" />
                     <Binding Path="SelectedPerson.LastName" />
+                    <Binding Path="SelectedPerson" Converter="{StaticResource PersonAgeConverter}" />
                 </MultiBinding>
             </TextBlock.Text>
         </TextBlock>
@@ -50,7 +55,6 @@
         </ListBox>
 
         <StackPanel Grid.Row="2" Grid.Column="1">
-            
             <Button Content="Add Person" Command="{Binding AddPersonCommand}" />
         </StackPanel>
     </Grid>

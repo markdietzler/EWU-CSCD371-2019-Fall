@@ -22,7 +22,7 @@ namespace WpfApp1
     {
         public MainWindow()
         {
-            DataContext = new MainWindowViewModel();
+            DataContext = new MainWindowViewModel(() => DateTime.Now);
             InitializeComponent();
         }
 

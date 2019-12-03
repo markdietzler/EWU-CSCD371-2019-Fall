@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
@@ -21,8 +22,6 @@ namespace WpfApp1
             }
         }
 
-        private string GetName([CallerMemberName] string foo = null) => foo;
-
         private string _Text;
         public string Text
         {
@@ -42,23 +41,27 @@ namespace WpfApp1
         public ICommand ChangeNameCommand { get; }
 
         public ICommand AddPersonCommand { get; }
+        private Func<DateTime> GetNow { get; }
 
-        public MainWindowViewModel()
+        public MainWindowViewModel(Func<DateTime> getNow)
         {
             Text = "Hello World";
             ChangeNameCommand = new Command(OnChangeName);
             AddPersonCommand = new Command(OnAddPerson);
 
-            People.Add(new Person("Kevin", "Bost"));
-            People.Add(new Person("Mark", "Mc"));
+            var dob = getNow().Subtract(TimeSpan.FromDays(30 * 365));
+
+            People.Add(new Person("Kevin", "Bost", dob));
+            People.Add(new Person("Mark", "Mc", dob));
 
             SelectedPerson = People.First();
+            GetNow = getNow ?? throw new ArgumentNullException(nameof(getNow));
         }
 
         private void OnAddPerson()
         {
-            People.Add(new Person("Foo", $"Bar {People.Count}"));
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(People)));
+            var dob = GetNow().Subtract(TimeSpan.FromDays(30 * 365));
+            People.Add(new Person("Foo", $"Bar {People.Count}", dob));
         }
 
         private void OnChangeName()
