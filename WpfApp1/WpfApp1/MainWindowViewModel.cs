@@ -1,7 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
 
@@ -27,7 +27,14 @@ namespace WpfApp1
         public string Text
         {
             get => _Text;
-            set => SetProperty(ref _Text, value, "Text");
+            set => SetProperty(ref _Text, value);
+        }
+
+        private Person _SelectedPerson;
+        public Person SelectedPerson
+        {
+            get => _SelectedPerson;
+            set => SetProperty(ref _SelectedPerson, value);
         }
 
         public ObservableCollection<Person> People { get; } = new ObservableCollection<Person>();
@@ -44,6 +51,8 @@ namespace WpfApp1
 
             People.Add(new Person("Kevin", "Bost"));
             People.Add(new Person("Mark", "Mc"));
+
+            SelectedPerson = People.First();
         }
 
         private void OnAddPerson()

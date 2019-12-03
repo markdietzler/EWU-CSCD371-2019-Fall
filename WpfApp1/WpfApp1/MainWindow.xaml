@@ -6,6 +6,7 @@
         xmlns:local="clr-namespace:WpfApp1"
         mc:Ignorable="d" Topmost="True" 
         TextElement.FontSize="40"
+        x:Name="MyWindow"
         d:DataContext="{d:DesignInstance Type=local:MainWindowViewModel}"
         Title="MainWindow" Height="450" Width="800">
     <Grid Background="Lime" >
@@ -20,9 +21,25 @@
         </Grid.RowDefinitions>
         <TextBlock Grid.Row="0" Text="{Binding Text}"
                    TextAlignment="Center" Background="Fuchsia" />
-        <Button Grid.Row="1" Content="Button" Command="{Binding ChangeNameCommand}"/>
+        <StackPanel Grid.Row="1">
+            <Button Content="Button" Command="{Binding ChangeNameCommand}"/>
+            <TextBlock Text="First Name" />
+            <TextBox Text="{Binding SelectedPerson.FirstName, UpdateSourceTrigger=PropertyChanged}"/>
+            <TextBlock Text="Last Name" />
+            <TextBox Text="{Binding SelectedPerson.LastName}"/>
+        </StackPanel>
 
-        <ListBox ItemsSource="{Binding People}" Grid.Column="1" Grid.RowSpan="2">
+        <TextBlock Grid.Column="0" Grid.Row="2">
+            <TextBlock.Text>
+                <MultiBinding StringFormat="Hi {0} {1}">
+                    <Binding Path="SelectedPerson.FirstName" />
+                    <Binding Path="SelectedPerson.LastName" />
+                </MultiBinding>
+            </TextBlock.Text>
+        </TextBlock>
+
+        <ListBox ItemsSource="{Binding People}" Grid.Column="1" Grid.RowSpan="2" x:Name="PeopleList"
+                 SelectedItem="{Binding SelectedPerson}">
             <ListBox.ItemTemplate>
                 <DataTemplate DataType="{x:Type local:Person}">
                     <StackPanel>
