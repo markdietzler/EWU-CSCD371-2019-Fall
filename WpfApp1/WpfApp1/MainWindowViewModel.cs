@@ -12,7 +12,7 @@ namespace WpfApp1
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        private void SetProperty<T>(ref T field, T value, 
+        private void SetProperty<T>(ref T field, T value,
             [CallerMemberName]string propertyName = null)
         {
             if (!EqualityComparer<T>.Default.Equals(field, value))
@@ -38,15 +38,17 @@ namespace WpfApp1
 
         public ObservableCollection<Person> People { get; } = new ObservableCollection<Person>();
 
-        public ICommand ChangeNameCommand { get; }
+        public Command ChangeNameCommand { get; }
 
         public ICommand AddPersonCommand { get; }
         private Func<DateTime> GetNow { get; }
 
+        private bool CanExecute { get; set; }
+
         public MainWindowViewModel(Func<DateTime> getNow)
         {
             Text = "Hello World";
-            ChangeNameCommand = new Command(OnChangeName);
+            ChangeNameCommand = new Command(OnChangeName, () => CanExecute);
             AddPersonCommand = new Command(OnAddPerson);
 
             var dob = getNow().Subtract(TimeSpan.FromDays(30 * 365));
@@ -62,6 +64,8 @@ namespace WpfApp1
         {
             var dob = GetNow().Subtract(TimeSpan.FromDays(30 * 365));
             People.Add(new Person("Foo", $"Bar {People.Count}", dob));
+            CanExecute = true;
+            ChangeNameCommand.InvokeCanExecuteChanged();
         }
 
         private void OnChangeName()

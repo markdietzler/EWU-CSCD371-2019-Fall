@@ -11,6 +11,43 @@
         Title="MainWindow" Height="450" Width="800">
     <Window.Resources>
         <local:PersonAgeConverter x:Key="PersonAgeConverter" />
+
+        <Style x:Key="EditTextStyle" TargetType="TextBlock">
+            <Setter Property="FontStyle" Value="Italic" />
+            <Setter Property="Foreground" Value="Navy" />
+        </Style>
+
+        <Style TargetType="ButtonBase" x:Key="MyButtonStyle">
+            <Setter Property="Background" Value="BurlyWood" />
+        </Style>
+
+        <Style TargetType="Button" BasedOn="{StaticResource MyButtonStyle}">
+            <Style.Triggers>
+                <Trigger Property="IsPressed" Value="True">
+                    <Setter Property="Foreground" Value="BlanchedAlmond" />
+                </Trigger> 
+            </Style.Triggers>
+        </Style>
+
+        <Style TargetType="ToggleButton" BasedOn="{StaticResource MyButtonStyle}">
+
+        </Style>
+
+        <DataTemplate DataType="{x:Type local:Person}" x:Key="PersonTemplate">
+            <StackPanel>
+                <TextBlock Text="{Binding LastName}">
+                    <TextBlock.Style>
+                        <Style TargetType="TextBlock">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding FirstName}" Value="Kevin">
+                                    <Setter Property="Foreground" Value="MistyRose" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+            </StackPanel>
+        </DataTemplate>
     </Window.Resources>
     
     <Grid Background="Lime">
@@ -26,10 +63,10 @@
         <TextBlock Grid.Row="0" Text="{Binding Text}"
                    TextAlignment="Center" Background="Fuchsia" />
         <StackPanel Grid.Row="1">
-            <Button Content="Button" Command="{Binding ChangeNameCommand}"/>
-            <TextBlock Text="First Name" />
+            <ToggleButton Content="Button" Command="{Binding ChangeNameCommand}"/>
+            <TextBlock Text="First Name" Style="{StaticResource EditTextStyle}" />
             <TextBox Text="{Binding SelectedPerson.FirstName, UpdateSourceTrigger=PropertyChanged}"/>
-            <TextBlock Text="Last Name" />
+            <TextBlock Text="Last Name" Style="{StaticResource EditTextStyle}" />
             <TextBox Text="{Binding SelectedPerson.LastName}"/>
         </StackPanel>
 
@@ -44,15 +81,8 @@
         </TextBlock>
 
         <ListBox ItemsSource="{Binding People}" Grid.Column="1" Grid.RowSpan="2" x:Name="PeopleList"
-                 SelectedItem="{Binding SelectedPerson}">
-            <ListBox.ItemTemplate>
-                <DataTemplate DataType="{x:Type local:Person}">
-                    <StackPanel>
-                        <TextBlock Text="{Binding LastName}" />
-                    </StackPanel>
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>
+                 SelectedItem="{Binding SelectedPerson}" ItemTemplate="{StaticResource PersonTemplate}" />
+
 
         <StackPanel Grid.Row="2" Grid.Column="1">
             <Button Content="Add Person" Command="{Binding AddPersonCommand}" />
