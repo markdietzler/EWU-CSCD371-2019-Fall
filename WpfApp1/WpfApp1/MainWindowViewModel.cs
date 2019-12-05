@@ -1,44 +1,31 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.Command;
+using System;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Windows.Input;
 
 namespace WpfApp1
 {
-    public class MainWindowViewModel : INotifyPropertyChanged
+    public class MainWindowViewModel : ViewModelBase
     {
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        private void SetProperty<T>(ref T field, T value,
-            [CallerMemberName]string propertyName = null)
-        {
-            if (!EqualityComparer<T>.Default.Equals(field, value))
-            {
-                field = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-            }
-        }
-
         private string _Text;
         public string Text
         {
             get => _Text;
-            set => SetProperty(ref _Text, value);
+            set => Set(ref _Text, value);
         }
 
         private Person _SelectedPerson;
         public Person SelectedPerson
         {
             get => _SelectedPerson;
-            set => SetProperty(ref _SelectedPerson, value);
+            set => Set(ref _SelectedPerson, value);
         }
 
         public ObservableCollection<Person> People { get; } = new ObservableCollection<Person>();
 
-        public Command ChangeNameCommand { get; }
+        public RelayCommand ChangeNameCommand { get; }
 
         public ICommand AddPersonCommand { get; }
         private Func<DateTime> GetNow { get; }
@@ -48,8 +35,8 @@ namespace WpfApp1
         public MainWindowViewModel(Func<DateTime> getNow)
         {
             Text = "Hello World";
-            ChangeNameCommand = new Command(OnChangeName, () => CanExecute);
-            AddPersonCommand = new Command(OnAddPerson);
+            ChangeNameCommand = new RelayCommand(OnChangeName, () => CanExecute);
+            AddPersonCommand = new RelayCommand(OnAddPerson);
 
             var dob = getNow().Subtract(TimeSpan.FromDays(30 * 365));
 
@@ -65,7 +52,7 @@ namespace WpfApp1
             var dob = GetNow().Subtract(TimeSpan.FromDays(30 * 365));
             People.Add(new Person("Foo", $"Bar {People.Count}", dob));
             CanExecute = true;
-            ChangeNameCommand.InvokeCanExecuteChanged();
+            ChangeNameCommand.RaiseCanExecuteChanged();
         }
 
         private void OnChangeName()
