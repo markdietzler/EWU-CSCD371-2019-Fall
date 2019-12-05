@@ -8,29 +8,46 @@
         TextElement.FontSize="30"
         x:Name="MyWindow"
         d:DataContext="{d:DesignInstance Type=local:MainWindowViewModel}"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        Background="{DynamicResource MaterialDesignPaper}"
         Title="MainWindow" Height="450" Width="800">
     <Window.Resources>
         <local:PersonAgeConverter x:Key="PersonAgeConverter" />
 
+        <SolidColorBrush x:Key="HeaderColor" Color="Red" />
+        <LinearGradientBrush StartPoint="0,0"
+                             EndPoint="1,1" x:Key="GradientBrush">
+            <GradientBrush.GradientStops>
+                <GradientStopCollection>
+                    <GradientStop Color="Fuchsia"
+                                    Offset="0.0" />
+                    <GradientStop Color="Lime"
+                                    Offset="1.0" />
+                </GradientStopCollection>
+            </GradientBrush.GradientStops>
+        </LinearGradientBrush>
+
         <Style x:Key="EditTextStyle" TargetType="TextBlock">
             <Setter Property="FontStyle" Value="Italic" />
-            <Setter Property="Foreground" Value="Navy" />
+            <Setter Property="Foreground" Value="{DynamicResource GradientBrush}" />
         </Style>
 
         <Style TargetType="ButtonBase" x:Key="MyButtonStyle">
             <Setter Property="Background" Value="BurlyWood" />
         </Style>
 
-        <Style TargetType="Button" BasedOn="{StaticResource MyButtonStyle}">
+        <!--<ControlTemplate TargetType="Button" x:Key="MyButtonTemplate">
+            <Border Background="{TemplateBinding Background}" CornerRadius="10" Padding="10">
+                <ContentPresenter />
+            </Border>
+        </ControlTemplate>-->
+
+        <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
             <Style.Triggers>
                 <Trigger Property="IsPressed" Value="True">
-                    <Setter Property="Foreground" Value="BlanchedAlmond" />
-                </Trigger> 
+                    <Setter Property="Foreground" Value="Red" />
+                </Trigger>
             </Style.Triggers>
-        </Style>
-
-        <Style TargetType="ToggleButton" BasedOn="{StaticResource MyButtonStyle}">
-
         </Style>
 
         <DataTemplate DataType="{x:Type local:Person}" x:Key="PersonTemplate">
@@ -50,7 +67,7 @@
         </DataTemplate>
     </Window.Resources>
     
-    <Grid Background="Lime">
+    <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition />
             <ColumnDefinition />
@@ -61,9 +78,9 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <TextBlock Grid.Row="0" Text="{Binding Text}"
-                   TextAlignment="Center" Background="Fuchsia" />
+                   TextAlignment="Center" />
         <StackPanel Grid.Row="1">
-            <ToggleButton Content="Button" Command="{Binding ChangeNameCommand}"/>
+            <Button Content="Button" Command="{Binding ChangeNameCommand}"/>
             <TextBlock Text="First Name" Style="{StaticResource EditTextStyle}" />
             <TextBox Text="{Binding SelectedPerson.FirstName, UpdateSourceTrigger=PropertyChanged}"/>
             <TextBlock Text="Last Name" Style="{StaticResource EditTextStyle}" />
@@ -85,7 +102,14 @@
 
 
         <StackPanel Grid.Row="2" Grid.Column="1">
-            <Button Content="Add Person" Command="{Binding AddPersonCommand}" />
+            <Button Command="{Binding AddPersonCommand}" HorizontalContentAlignment="Center"
+                    >
+                <Button.Content>
+                    <Border>
+                        <TextBlock Text="Add Person" />
+                    </Border>
+                </Button.Content>
+            </Button>
         </StackPanel>
     </Grid>
 </Window>
